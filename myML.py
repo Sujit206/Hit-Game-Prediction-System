@@ -42,41 +42,136 @@
 #     else:
 #         st.warning(f"Not Likely Hit.\nProbability:{prob:.2f}")
 
+
+###2nd attempt
+# import streamlit as st
+# import pandas as pd
+# import joblib
+
+# # -------------------------
+# # Load model and columns
+# # -------------------------
+# model = joblib.load("hit_game_model.pkl")
+# model_columns = joblib.load("model_columns.pkl")
+
+# THRESHOLD = 0.7
+
+# # -------------------------
+# # Page Config
+# # -------------------------
+# st.set_page_config(page_title="Hit Game Predictor", page_icon="🎮")
+
+# st.title("🎮 Hit Game Classification System")
+# st.write("Predict whether a video game is likely to become a Hit based on historical data.")
+
+# st.markdown("---")
+
+# # -------------------------
+# # User Inputs
+# # -------------------------
+# platform = st.text_input("Platform (Example: PS2, X360, PS4, DS)")
+# genre = st.text_input("Genre (Example: Action, Sports, Shooter, RPG)")
+# publisher = st.text_input("Publisher (Example: Nintendo, EA, Ubisoft, Activision)")
+# year = st.number_input("Release Year", min_value=1980, max_value=2025, value=2010)
+
+# st.markdown("---")
+
+# if st.button("Predict Hit Probability"):
+
+#     # Create input dataframe
+#     input_data = pd.DataFrame({
+#         "platform": [platform],
+#         "genre": [genre],
+#         "publisher": [publisher],
+#         "year": [year]
+#     })
+
+#     # One-hot encode
+#     # input_data = pd.get_dummies(input_data)
+
+#     # Align columns with training data
+#     # input_data = input_data.reindex(columns=model_columns, fill_value=0)
+
+#     #load columns
+#     model_columns = joblib.load("model_columns.pkl")
+    
+#     #one-hot encoding
+#     input_data = pd.get_dummies(input_data)
+
+#     #add missing columns
+#     for col in model_columns:
+#         if col not in input_data.columns:
+#             input_data[col] = 0
+
+#     #keep only training columns and order
+#     input_data = input_data[model_columns]
+
+#     # Predict probability
+#     probability = model.predict_proba(input_data)[:, 1][0]
+#     prediction = 1 if probability > THRESHOLD else 0
+
+#     st.subheader("Prediction Result")
+
+#     if prediction == 1:
+#         st.success(f"🔥 Likely HIT Game!\n\nProbability: {probability:.2f}")
+#     else:
+#         st.warning(f"⚠ Not Likely to be a Hit.\n\nProbability: {probability:.2f}")
+
+#     st.progress(float(probability))
+
+# st.markdown("---")
+# st.caption("Model: Logistic Regression | ROC-AUC: 0.81 | Threshold: 0.7")
+
+
+####### 3rd attempt #####
+
 import streamlit as st
 import pandas as pd
 import joblib
 
-# -------------------------
-# Load model and columns
-# -------------------------
-model = joblib.load("hit_game_model.pkl")
-model_columns = joblib.load("model_columns.pkl")
-
+# -----------------------------
+# CONFIG
+# -----------------------------
 THRESHOLD = 0.7
 
-# -------------------------
-# Page Config
-# -------------------------
 st.set_page_config(page_title="Hit Game Predictor", page_icon="🎮")
 
 st.title("🎮 Hit Game Classification System")
-st.write("Predict whether a video game is likely to become a Hit based on historical data.")
+st.write("Predict whether a video game is likely to become a Hit.")
 
 st.markdown("---")
 
-# -------------------------
-# User Inputs
-# -------------------------
-platform = st.text_input("Platform (Example: PS2, X360, PS4, DS)")
-genre = st.text_input("Genre (Example: Action, Sports, Shooter, RPG)")
-publisher = st.text_input("Publisher (Example: Nintendo, EA, Ubisoft, Activision)")
+# -----------------------------
+# LOAD MODEL & COLUMNS
+# -----------------------------
+try:
+    model = joblib.load("hit_game_model.pkl")
+    model_columns = joblib.load("model_columns.pkl")
+except Exception as e:
+    st.error("Model files not found. Make sure .pkl files are in the same folder.")
+    st.stop()
+
+# Extract unique values from model columns to get valid options
+platforms = sorted(list(set([col.replace("platform_", "") for col in model_columns if col.startswith("platform_")])))
+genres = sorted(list(set([col.replace("genre_", "") for col in model_columns if col.startswith("genre_")])))
+publishers = sorted(list(set([col.replace("publisher_", "") for col in model_columns if col.startswith("publisher_")])))
+
+# -----------------------------
+# USER INPUT
+# -----------------------------
+platform = st.selectbox("Platform", platforms)
+genre = st.selectbox("Genre", genres)
+publisher = st.selectbox("Publisher", publishers)
 year = st.number_input("Release Year", min_value=1980, max_value=2025, value=2010)
 
 st.markdown("---")
 
-if st.button("Predict Hit Probability"):
+# -----------------------------
+# PREDICTION BUTTON
+# -----------------------------
+if st.button("Predict"):
 
-    # Create input dataframe
+    # Create dataframe
     input_data = pd.DataFrame({
         "platform": [platform],
         "genre": [genre],
@@ -87,21 +182,32 @@ if st.button("Predict Hit Probability"):
     # One-hot encode
     input_data = pd.get_dummies(input_data)
 
-    # Align columns with training data
-    input_data = input_data.reindex(columns=model_columns, fill_value=0)
+    # Get expected feature names from the model
+    expected_columns = model.feature_names_in_
+    
+    # Align columns with training data using reindex
+    input_data = input_data.reindex(columns=expected_columns, fill_value=0)
 
-    # Predict probability
-    probability = model.predict_proba(input_data)[:, 1][0]
-    prediction = 1 if probability > THRESHOLD else 0
+    # -----------------------------
+    # PREDICT
+    # -----------------------------
+    try:
+        probability = model.predict_proba(input_data)[:, 1][0]
+        prediction = 1 if probability > THRESHOLD else 0
 
-    st.subheader("Prediction Result")
+        st.subheader("Prediction Result")
 
-    if prediction == 1:
-        st.success(f"🔥 Likely HIT Game!\n\nProbability: {probability:.2f}")
-    else:
-        st.warning(f"⚠ Not Likely to be a Hit.\n\nProbability: {probability:.2f}")
+        if prediction == 1:
+            st.success(f"🔥 Likely HIT Game!\n\nProbability: {probability:.2f}")
+        else:
+            st.warning(f"⚠ Not Likely to be a Hit.\n\nProbability: {probability:.2f}")
 
-    st.progress(float(probability))
+        st.progress(float(probability))
+
+    except Exception as e:
+        st.error("Prediction failed. Please check input values.")
+        st.write(e)
 
 st.markdown("---")
 st.caption("Model: Logistic Regression | ROC-AUC: 0.81 | Threshold: 0.7")
+
