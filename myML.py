@@ -13,9 +13,9 @@ st.set_page_config(page_title="Hit Game Predictor", page_icon="🎮", layout="wi
 st.markdown("""
 <style>
 
-    # MainMenu {visibility: hidden;}
-    # footer {visibility: hidden;}
-    # header {visibility: hidden;}
+    MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
 
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     .stApp {
