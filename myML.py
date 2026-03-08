@@ -13,11 +13,9 @@ st.set_page_config(page_title="Hit Game Predictor", page_icon="🎮", layout="wi
 st.markdown("""
 <style>
 
-
-
-    MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    # MainMenu {visibility: hidden;}
+    # footer {visibility: hidden;}
+    # header {visibility: hidden;}
 
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     .stApp {
@@ -79,7 +77,7 @@ st.markdown("""
     }
     
 
-        /* Floating particles effect */
+    /* Floating particles effect */
     .particles {
         position: fixed;
         top: 0;
@@ -109,18 +107,26 @@ st.markdown("""
         <div class="particle" style="width: 4px; height: 4px; left: 90%; animation-delay: 8s;"></div>
     </div>
 
+    .main-header>h1{
+       text-align: center;
+    }
+            
 .main-header {
-    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+    width: 100%;
+    # background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 25px;
+    background: linear-gradient(45deg, #fff, #f0f0f0);
+    -webkit-background-clip: text;
     padding: 2.8rem 0;
     margin-bottom: 2.5rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     text-align: center;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.1);
-    border: 2px solid rgba(255,255,255,0.5);
+    # box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
     border-radius: 25px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
     overflow: hidden;
 }
 
@@ -138,8 +144,6 @@ st.markdown("""
     0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
     100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
-
-
 
 
 .hero-card {
@@ -278,9 +282,7 @@ div[data-baseweb="select"] {
     margin-top: 3rem;
     color: #a8b2d1;
 
-    # background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
-    # border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 25px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
 
